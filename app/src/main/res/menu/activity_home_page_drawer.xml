@@ -1,28 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:title="Select Filters">
-        <menu>
-            <item
-                android:id="@+id/filter1"
-                android:icon="@drawable/edit"
-                android:title="Filter 1" />
-            <item
-                android:id="@+id/filter2"
-                android:icon="@drawable/edit"
-                android:title="Filter 2" />
-            <item
-                android:id="@+id/filter3"
-                android:icon="@drawable/edit"
-                android:title="Filter 3" />
-            <item
-                android:id="@+id/filter4"
-                android:icon="@drawable/edit"
-                android:title="Filter 4" />
-        </menu>
-    </item>
+    <group android:checkableBehavior="single"
+        android:id="@+id/categories_group"
+        android:orderInCategory="1">
 
 
+    </group>
+
+
+
+
+    <group android:checkableBehavior="single"
+        android:orderInCategory="2"
+        android:id="@+id/settings_support">
     <item android:title="Communicate">
         <menu>
             <item
@@ -48,5 +38,5 @@
                 android:title="Logout" />
         </menu>
     </item>
-
+    </group>
 </menu>

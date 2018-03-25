@@ -1,39 +1,51 @@
 package com.example.sainikhil.vasavinews;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
+import android.widget.SearchView;
+
+import com.example.sainikhil.vasavinews.menuactions.MenuCreate;
+import com.example.sainikhil.vasavinews.tagsdata.TagsAdapter;
 
 public class HomePage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     //private android.widget.SearchView searchView;
     private SearchView searchView;
-
+    public boolean[] selected_tags;
+    private String[] selected;
+    private String[] tagsArray;
+    private TabLayout tabLayout;
+    private static final int TAGS_ACTIVITY_REQUEST_CODE = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        searchView=(SearchView)findViewById(R.id.sv);
+        //searchView=(SearchView)findViewById(R.id.sv);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(HomePage.this, PostNewsActivity.class);
+                startActivity(intent);
             }
         });
+        /*
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -47,15 +59,65 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
                 return false;
             }
         });
-
+*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        Intent i= new Intent(this,TagsActivity.class);
+        startActivityForResult(i,TAGS_ACTIVITY_REQUEST_CODE);
+
+        tagsArray = getResources().getStringArray(R.array.tags_array);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        TagsAdapter adapter = new TagsAdapter(getSupportFragmentManager(), tagsArray);
+        viewPager.setAdapter(adapter);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        tabLayout.setupWithViewPager(viewPager);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //generating menu items
+        MenuCreate menuCreate = new MenuCreate(navigationView,tagsArray,tabLayout);
+        menuCreate.addMenu();
+    }
+
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==TAGS_ACTIVITY_REQUEST_CODE)
+        {
+            selected_tags=data.getBooleanArrayExtra("selected_tags");
+           // TextView dummy_text=(TextView)findViewById(R.id.dummy_text);
+
+            int count = 0;
+            for (boolean i : selected_tags)
+            {
+                if(i==true)
+                    count++;
+            }
+            selected = new String[count];
+            String[] tagsArray = getResources().getStringArray(R.array.tags_array);
+            int current=0;
+            for(int i=0;i<tagsArray.length;i++)
+            {
+                if(selected_tags[i])
+                {
+                    selected[current]=tagsArray[i];
+                    current++;
+                }
+            }
+            //dummy_text.setText(java.util.Arrays.toString(selected_tags));
+
+
+        }
+
     }
 
     @Override
@@ -100,41 +162,36 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.filter1) {
-            // Handle the camera action
-        } else if (id == R.id.filter2) {
 
-        } else if (id == R.id.filter3) {
 
-        } else if (id == R.id.filter4) {
 
-        } else if (id == R.id.nav_share) {
+
+        if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
-        }else if (id == R.id.nav_about) {
+        } else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_settings) {
 
-        }else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_logout) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public boolean[] getSelected_tags()
+    {
+        return selected_tags;
+    }
+
+
 
          /*
         uncomment after implementing tagslist adapter
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(DailyActivity.this, EditorActivity.class);
-                             startActivity(intent);
-            }
-        });
         // Find the view pager that will allow the user to swipe between fragments
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
 
@@ -153,7 +210,7 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
 
 
         */
-    }
+
 
 
 }
